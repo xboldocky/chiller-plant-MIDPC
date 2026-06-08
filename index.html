@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Data Center Chiller Plant Optimization via Mixed-Integer Nonlinear Differentiable Predictive Control.">
+  <meta name="keywords" content="NeuralDAEs, Operator Splitting, Neuromancer library">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Center Chiller Plant Optimization via Mixed-Integer Nonlinear Differentiable Predictive Control</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+<!--  to support latex -->
+  <script type="text/javascript"
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
+</head>
+<body>
+
+<!-- home button at the top-->
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://drgona.github.io/">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+        <span>Home</span>
+      </a>
+    </div>
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Data Center Chiller Plant Optimization via Mixed-Integer Nonlinear Differentiable Predictive Control</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=2jaaGZsAAAAJ&hl=en&oi=ao">Jan Boldocky</a><sup>2,1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=y6Jw9TsAAAAJ&hl=en&oi=ao">Cary Faulkner</a><sup>1</sup>,</span>
+            <span class="author-block">
+                            <a href="https://scholar.google.com/citations?user=oW1clg0AAAAJ&hl=en">Elad Michael</a><sup>1</sup>,</span>
+            <span class="author-block">
+                            <a href="https://scholar.google.com/citations?user=aHT9pdEAAAAJ&hl=en&oi=ao">Martin Gulan</a><sup>2</sup>,</span>
+            <span class="author-block">
+            <span class="author-block">
+                            <a href="https://scholar.google.com/citations?user=S9Qg6qcAAAAJ&hl=en&oi=ao">Aaron Tuor</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://drgona.github.io/">Jan Drgona</a><sup>1,3</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Pacific Northwest National Laboratory,</span>
+            <span class="author-block"><sup>2</sup>Slovak University of Technology,</span>
+            <span class="author-block"><sup>3</sup>Johns Hopkins University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://www.sciencedirect.com/science/article/pii/S0967066126003072?ssrnid=5764791&dgcid=SSRN_redirect_SD"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2603.28323"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/pnnl/MI-DPC"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+    <!-- Abstract. -->
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          This paper presents a computationally tractable framework for real-time predictive control of multi-chiller plants whose 
+          operation involves discrete and continuous control decisions coupled through nonlinear dynamics,
+           resulting in a mixed-integer optimal control problem.
+           To address this challenge, the Differentiable Predictive Control (DPC)-a self-supervised, model-based learning methodology for approximately solving parametric optimal control 
+           problems—is extended to accommodate mixed-integer control policies.
+            The proposed framework is benchmarked against a state-of-the-art mixed-integer Model Predictive Control (MPC) solver 
+            and a fast heuristic Rule-Based Controller (RBC). Simulation results demonstrate that the proposed approach achieves 
+            significant energy savings over the RBC while maintaining orders-of-magnitude faster computation times than MPC,
+             offering a scalable and practical alternative to conventional combinatorial mixed-integer control formulations.
+        </p>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!--/ Abstract. -->
+    
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+<br><br>
+<div class="has-text-centered" style="margin-top: -2.5rem;">
+  <img src="./figures/graphical_abstract.png" alt="Neural DAE architecture" style="max-width: 100%; height: auto;" />
+  <p><em><strong>Figure:</strong> Graphical Abstract.</em></p>
+</div>
+  <!-- <br> -->
+  <!-- <br> -->
+
+<!-- paper summary -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+<!-- Motivation -->
+<div class="columns is-centered">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Motivation</h2>
+    <div class="content has-text-justified">
+      The rapid expansion of artificial intelligence and digital infrastructure has led to a sharp increase in global data center electricity demand. In the United States alone, data centers currently consume about
+150 TWh of electricity annually and are projected to grow to between
+200 TWh and 500 TWh by 2030 (<a href="https://www.epri.com/research/products/3002028905">Aljbour et al., 2024</a>). With this expansion comes an accompanying demand for high-efficiency cooling systems in data centers. Chiller plants are commonly deployed to perform
+this task. A chiller plant typically includes heat pumps, pumps, and cooling towers, with the heat pumps being the most
+energy-intensive components within the plant. Control of chiller plants
+involves both continuous decision variables (e.g., chilled water supply
+temperature, differential pressure) and discrete decision variables (e.g.,
+number of chillers active, pump mode). Optimizing these coupled decisions can significantly reduce electricity consumption, ensure reliable
+operation, and extend the lifespan of costly mechanical assets. However,
+this requires solving a high-dimensional mixed-integer nonlinear optimal control problem, which is computationally challenging to solve in
+real time.
+     <br><br>
+     To address these challenges, the proposed approach utilizes Differentiable Predictive Control (DPC) (<a href="https://www.sciencedirect.com/science/article/pii/S0959152422000981">Drgona et al., 2022</a>), which formulates parametric MPC problems as differentiable programs, enabling offline self-supervised learning of explicit neural control policies through gradient-based learning.
+Expanding upon this foundation, recent work on Mixed-Integer DPC (MI-DPC) (<a href="https://arxiv.org/abs/2506.19646">Boldocky et al., 2025</a>) extended this idea to handle mixed-integer optimal control problems (MI-OCPs) with discrete decision variables. 
+<!-- <br> -->
+<!-- In this work, the application of MI-DPC is demonstrated by solving a challenging multi-chiller plant optimization problem characterized by nonlinear dynamics, mixed-integer decisions, and input and state constraints. -->
+<!-- The proposed MI-DPC approach provides a scalable self-supervised learning algorithm for the synthesis of computationally efficient explicit neural control policies that yield high-quality approximate solutions to the underlying MI-OCP without online combinatorial search. -->
+    </div>
+  </div>
+</div>
+
+
+    
+<!-- Problem Formulation -->
+<div class="columns is-centered">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Problem Formulation</h2>
+    <div class="content has-text-justified">
+     
+The continuous-time thermal dynamics of the multi-chiller system are
+\begin{align}
+Q^{(i)}(t) &= \eta_\mathrm{r}\dot{m}^{(i)}(t)\; c_\mathrm{p}\delta^{(i)}(t) \left( T_\mathrm{r}(t)-T^{(i)}_\mathrm{s}(t) \right), \label{eq:cooling_delivered}\\ 
+\dot{T}_\mathrm{r}(t) &= \frac{1}{C_\mathrm{r}}\left(\tilde{Q}_\text{load}(t) - \sum_{i=1}^{M}Q^{(i)}(t) \right), \label{eq:temp_return}\\
+\dot{T}_\mathrm{s}^{(i)}(t) &= -\frac{c_\mathrm{p} \eta_\mathrm{s}}{C^{(i)}}\left(\delta^{(i)}(t)\dot{m}^{(i)}(t) \left(T^{(i)}_\mathrm{s}(t)-T^{(i)}_\mathrm{e}(t)\right)\right),\!\! \label{eq:temp_supply}
+\end{align}
+<br>
+where \( Q^{(i)}(t)\!\in\!\mathbb{R}_{\ge0} \) is the delivered cooling from chiller \( i \) at time \( t \), 
+\( \delta^{(i)}(t)\!\in\!\{0,1\} \) denotes the chiller's on/off state, \( c_\mathrm{p}\! \in\!\mathbb{R}_{>0} \) 
+is the specific heat capacity of the coolant, \( T_\mathrm{r}(t)\!\in\!\mathbb{R} \) is the return water temperature, and \( C_\mathrm{r},C^{(i)}\!\in\!\mathbb{R}_{>0} \) 
+are the thermal capacitances of the return and chiller loops, \( T_\mathrm{s}^{(i)}(t)\!\in\!\mathbb{R} \) is the supply water temperature for chiller \( i \in \{1, ..., M\} \). Moreover, \( \eta_\mathrm{r},\eta_\mathrm{s}\!\in\!(0,1) \)
+ denote the heat-exchanger efficiency coefficients, and \( \tilde{Q}_\text{load}(t)\!\in\! \mathbb{R}_{\ge0} \) 
+ is the effective thermal load, estimated using a low-pass, discrete-time finite impulse response (FIR) filter 
+\( \tilde{Q}_\text{load} (t) = \sum_{l=0}^{L} h_l Q_\text{load}(t-l\Delta t) \), where \( Q_\text{load}(t)\in\mathbb{R}_{\ge 0} \) is the direct server load; an exogenous variable in this context. 
+In the following, the continuous-time dynamics are discretized using a fourth-order Runge-Kutta method with a time-step length \( \Delta t \) and discrete time index \( k \); denoted as \( f(x_k, u_k, \tilde{Q}_{\text{load},k}, \Delta t) : \mathbb{R}^{n_x} \times \mathbb{R}^{n_u} \times \mathbb{R} \rightarrow \mathbb{R}^{n_x} \), where \(  x_k = [T_r(k), T_s^{(1)}(k), ..., T_s^{(M)}(k)]^T \).
+<br>
+<br>
+The power consumption of chillers \( P^{(i)}_\text{chiller}(t)\in\mathbb{R}_{\ge 0} \) and pumps \( P^{(i)}_\text{pump}(t)\in\mathbb{R}_{\ge 0} \) are modeled as
+\begin{align}
+P^{(i)}_\text{chiller}(t) &= \frac{Q^{(i)}(t)}{\text{COP}^{(i)}(t)}+\rho^{(i)}\delta^{(i)}(t) \label{eq:chiller_power},\\
+\text{COP}^{(i)}(t) &= a_0^{(i)}+a_1^{(i)}\frac{Q^{(i)}(t)}{Q_\text{max}^{(i)}}+a_2^{(i)}\left(\frac{Q^{(i)}(t)}{Q_\text{max}^{(i)}}\right)^2,\\
+P^{(i)}_\text{pump}(t) &= \gamma^{(i)}\left( \dot{m}^{(i)}(t)\delta^{(i)}(t) \right)^3, \label{eq:pump_power}
+\end{align}
+for the system constants \( a_{0:2}^{(i)},\gamma^{(i)},\rho^{(i)},Q_\text{max}^{(i)}\!\in\!\mathbb{R} \). 
+The constant \( \rho \) represents the base power required for chiller operation. 
+In this formulation, the chiller's coefficient of performance \( \text{COP}^{(i)}(t)\in\mathbb{R}_{\ge0} \) 
+is a function of the part-load ratio (PLR), the ratio of current cooling to maximum cooling capacity. 
+Ensuring that each chiller is operating near its highest efficiency load ratio is the core of the underlying optimal control problem.
+    </div>
+  </div>
+</div>
+
+<div class="columns is-centered">
+  <div class="column is-half">
+    <figure class="image">
+      <img src="./figures/chiller_diagram_revision (1)-1.png" alt="Schematic diagram of the multi-chiller system">
+    </figure>
+    <br>
+    <figcaption style="text-align: center;">
+      <em><strong>Figure:</strong> Schematic of a multiple-chiller plant arranged in a parallel configuration.</em>
+    </figcaption>
+  </div>
+</div>
+
+
+<!-- Methodology -->
+<div class="columns is-centered">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Methodology</h2>
+    <div class="content has-text-justified">
+      We formulate the mixed-integer optimal control problem as a differentiable program:
+      <!-- <br> -->
+      <div style="text-align: center;">
+        \begin{align} \nonumber
+        \min_{\theta_1,\theta_2,\theta_3}\mathbb{E}_{ \xi \sim P_{ \xi} }\!  
+           &\bigg[\sum_{k=0}^{N-1} \sum^M_{i=1} 
+           \underbrace{P^{(i)}_{\text{chiller},k}}_{\text{chiller power}}\!+\! 
+           \underbrace{P^{(i)}_{\text{pump},k}}_{\text{pump power}}\!+\!
+            \underbrace{\|\Delta\delta_k\|_R^2}_{\substack{\text{switching} \\ \text{penalty}}} \!+\! 
+            \lambda_W \underbrace{\left(Q_k\!-\!Q_{\text{load},k}\right)^2}_{\text{load tracking}} \!+\!
+             \underbrace{\lambda_x q(x_k)}_{\substack{\text{state cosntr.} \\ \text{penalty}}} \!+\!
+             \underbrace{\lambda_u p(u_k)}_{\substack{\text{input constr.} \\ \text{penalty}}} \!+\! 
+             \underbrace{\|\tilde\delta_k\odot(1-\tilde\delta_k)\|^2_\Lambda}_{\substack{\text{binary-variance} \\ \text{regularization}}}\bigg]\\[-0pt]
+        {\text{subject to}} \nonumber\\[-0pt]
+        \;  x_{k+1}=&f\left(x_k, u_k,\tilde{Q}_{\text{load},k}, \Delta t\right), \label{eq:dpc-dynamics} \textcolor{gray}{\leftarrow\text{dynamics}}\\
+        \dot{m}_k\!=&\,\pi_{\theta_1}(\xi_k),\;  \textcolor{gray}{\leftarrow\text{mass flow rate decision}}\\
+        T_{\mathrm{e},k}\!=&\,\pi_{\theta_2}(\xi_k),\; \textcolor{gray}{\leftarrow\text{evaporation temperature decision}}\\
+        \tilde\delta_k\!=&\,\pi_{\theta_3}(\xi_k), \textcolor{gray}{\leftarrow\text{relaxed binary decision}}\\
+        \delta_k \in &\;\{0,1\}^M, \;\, \forall k \in \{0,\dots,N\!-\!1\},\label{eq:dpc-binary} \textcolor{gray}{\leftarrow\text{integrality constraint}}\\
+        \delta^{(2)}_k =& \,1,\;\quad\quad\quad \forall k\in\{0,\dots,N-1\}, \label{eq:dpc-oneon} \textcolor{gray}{\leftarrow\text{"one-ON" safety constraint}}\\
+        \xi_k\!:=&\!\;[x_k, \tilde{Q}_{\text{load},k}, Q_{\text{load},k},\dots,Q_{\text{load},k\!+\!N}]^\top\!\!\!. \textcolor{gray}{\leftarrow\text{control parameters vector}}\label{eq:dpc-xi}\end{align} 
+      </div>
+      <br>
+     
+where, the parameters \( \theta_{(\cdot)} \) of the control policies \( \pi_{\theta_1} \), \( \pi_{\theta_2} \), and \( \pi_{\theta_3} \) are the optimization arguments. 
+The policies map the vector of control parameters \( \xi \) to continuous-valued control variables \( \dot m \) (mass flow), \( T_\mathrm{e} \) (evaporation temperature), and a slack variable \( \tilde\delta\!\in\!\mathbb{R}^{M-1} \)  (relaxed value of the binary control variable \( \delta \)). 
+By fixing one of the binary variables, the dimension of \( \tilde\delta \) is reduced to \( M\!-\!1 \). This is done as a safety mechanism to ensure that at least one chiller is always on.
+To compute control variables, separate neural modules are used, which are represented by fully connected deep neural networks. 
+Moreover, the control parameters are sampled from a known probability distribution \( P_\xi \) to emulate scenarios that are likely to occur during the system's operation. 
+\(N\) denotes prediction horizon length, whereas functions \( q(\cdot) \) and \( p(\cdot) \) denote state and input penalty functions weighted by \( \lambda_x \) and \( \lambda_u \), respectively. 
+      <br><br>      
+      The binary integrality is enforced using a threshold-based discretization scheme with a fixed threshold of \(0.5\), given as
+      \begin{align} 
+  \delta^{(i)}_{k} = & \begin{cases}
+      1, & \text{if } \tilde\delta^{(i)}_{k}>0.5,\\[0pt]
+  0, & \text{otherwise.}\\[0pt]
+  \end{cases}
+      \end{align}
+  This function behaves analogously to a Heaviside function exhibiting a discontinuity at \(0.5\). To enable gradient-based optimization, a Straight-through estimator heuristic by (<a href="https://arxiv.org/abs/1308.3432">Bengio et al., 2013</a>), is used. 
+  The gradient is approximated using its differentiable surrogate, given by a scaled sigmoid function
+  \( \sigma(x)\!=\!\left(1+e^{-\mu (x-0.5)} \right)^{-1} \),
+  where \( \mu\!\in\!\mathbb{R}_{>0} \) is a slope parameter determining the sharpness of the transition; additionally, the function is centered at \(0.5\). Accordingly, the derivative is approximated as 
+  \begin{align}
+      \frac{\partial \delta^{(i)}_{k}}{\partial \tilde{\delta}^{(i)}_{k}} 
+      \approx \frac{\partial \sigma\!\left(\tilde{\delta}^{(i)}_{k}\right)}{\partial \tilde{\delta}^{(i)}_{k}}.
+  \end{align}
+
+<br>
+The differentiable computational graph, comprises four components: a continuous neural policy, a differentiable rounding layer, a differentiable ordinary differential equation (ODE) solver,
+ and a model predictive loss function. Given synthetically sampled control parameters that include the initial conditions and a length-\(N\) vector of exogenous variables (server load), 
+ a closed-loop rollout of length \(N\) is performed through the integrated system dynamics, constituting the single-shooting forward pass. Consequently, the loss function is evaluated based on the resulting closed-loop trajectories. 
+The backward pass is used to enable policy optimization by propagating gradients through the computational graph.
+ Specifically, gradients of the loss function with respect to policy parameters are obtained by back-propagating through the integrated system dynamics using either the backpropagation
+  through time algorithm (Puskorius and Feldkamp, 1994).
+
+
+    <div style="text-align: center;">
+      <img src="figures/MI-NDPC_method_revision (1)-1.png" alt="MI-DPC Architecture" style="height: auto; margin: 1.5rem 0;" />
+      <p style="text-align: center;">
+        <em><strong>Figure:</strong> Conceptual diagram of the mixed-integer differentiable predictive control for nonlinear chiller plant optimization. <span style="color: green;">Green dashed arrows</span> represent the forward pass, while <span style="color: red;">red dashed arrows</span> represent the backward pass.</em>
+      </p>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="columns is-centered">
+  <div class="column is-full-width">
+    <h5 class="title is-5">Binary-Variance Regularization</h5>
+    <div class="content has-text-justified">
+      To promote binary polarization of the relaxed variable \( \tilde \delta \) and to complement the \( \Delta\delta \) penalty in suppressing high-frequency switching, a binary-variance regularization (BVR) is introduced as  \( \|\tilde\delta_k\odot(1-\tilde\delta_k)\|_\Lambda^2 \),
+      where \( \Lambda\!\in\!\mathbb{R}^{M-1\times M-1} \) denotes the weighting matrix. As the weight increases, the regularization penalizes values of \( \tilde\delta \) near the discretization threshold (\(0.5\)), as well as those outside the \([0,1]\) range. 
+      Based on extensive numerical experiments, this regularization has proven crucial to the proposed framework, as its omission leads to \( \tilde\delta \) values clustering around the discretization threshold, thereby increasing the likelihood of high-frequency switching behavior. The influence of this regularization on the relaxed binary variable for different penalty magnitudes is illustrated in the following Figure.
+    </div>
+    <div style="text-align: center;">
+      <img src="figures/experiment_plot.jpg" alt="BVR" style="height: auto; margin: 1.5rem 0;" />
+      <p style="text-align: center;">
+        <em><strong>Figure:</strong> Experimental results for the influence of the binary-variance regularization on the relaxed binary variable for different penalty magnitudes under a step change in cooling load from \(150 \text{ kW}\) to \(500 \text{ kW}\)  occurring at time \( k\!=\!20 \).</em>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Examples -->
+<div class="columns">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Simulation Results</h2>
+    <div class="content has-text-justified">
+      Our  chiller plant optimization framework and all our examples are implemented using the <a href="https://github.com/pnnl/neuromancer" target="_blank">Neuromancer library</a>.
+  <br>
+      <br>
+     Let's consider optimization problem of <strong>multi-chiller plant</strong> with sampling time of \( \Delta t = 180 \) seconds and the following parameters:
+  <br>
+  <div class="table-container" style="overflow-x: auto;">
+    <table class="table is-striped is-bordered is-hoverable is-fullwidth" style="min-width: 600px;">
+      <br>
+      <caption style="caption-side: top; text-align: center; font-weight: normal;">
+        <em> <strong>Table:</strong> Chiller system parameters. <br> </em>
+      </caption>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Description</th>
+          <th>Value</th>
+          <th>Unit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span>\(c_\mathrm{p}\)</span></td>
+          <td>Specific heat of water</td>
+          <td>4.184</td>
+          <td>kJ/(kg·°C)</td>
+        </tr>
+        <tr>
+          <td><span>\(C\)</span></td>
+          <td>Thermal capacitance</td>
+          <td>14644</td>
+          <td>kJ/°C</td>
+        </tr>
+        <tr>
+          <td><span>\(C_\mathrm{r}\)</span></td>
+          <td>Thermal capacitance</td>
+          <td>29288</td>
+          <td>kJ/°C</td>
+        </tr>
+        <tr>
+          <td><span>\(\rho\)</span></td>
+          <td>Base chiller power</td>
+          <td>10</td>
+          <td>kW</td>
+        </tr>
+        <tr>
+          <td><span>\(Q_{\max}\)</span></td>
+          <td>Maximum rated cooling</td>
+          <td>500</td>
+          <td>kW</td>
+        </tr>
+        <tr>
+          <td><span>\(a_0\)</span></td>
+          <td>Efficiency coefficient</td>
+          <td>1</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><span>\(a_1\)</span></td>
+          <td>Efficiency coefficient</td>
+          <td>19.33</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><span>\(a_2\)</span></td>
+          <td>Efficiency coefficient</td>
+          <td>-18.33</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><span>\(\eta_\mathrm{s}\)</span></td>
+          <td>Heat exchanger efficiency</td>
+          <td>0.7</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><span>\(\eta_\mathrm{r}\)</span></td>
+          <td>Heat exchanger efficiency</td>
+          <td>0.75</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><span>\(\gamma\)</span></td>
+          <td>Pump power coefficient</td>
+          <td>9.62e-4</td>
+          <td>kW·s³/kg³</td>
+        </tr>
+        <tr>
+          <td><span>\(\dot{m}^\text{min}\)</span></td>
+          <td>Minimum mass flow rate</td>
+          <td>6</td>
+          <td>kg/s</td>
+        </tr>
+        <tr>
+          <td><span>\(\dot{m}^\text{max}\)</span></td>
+          <td>Maximum mass flow rate</td>
+          <td>20</td>
+          <td>kg/s</td>
+        </tr>
+        <tr>
+          <td>
+            <span>
+              \(T_\text{s}^{\text{min}},
+              T_\text{e}^{\text{min}},
+              T_\text{r}^{\text{min}}\)
+            </span>
+          </td>
+          <td>Minimum temperatures</td>
+          <td>7</td>
+          <td>°C</td>
+        </tr>
+        <tr>
+          <td>
+            <span>
+              \(T_\text{s}^{\text{max}},
+              T_\text{e}^{\text{max}}\)
+            </span>
+          </td>
+          <td>Maximum temperatures</td>
+          <td>12</td>
+          <td>°C</td>
+        </tr>
+        <tr>
+          <td>
+            <span>
+              \(T_\text{r}^{\text{max}}\)
+            </span>
+          </td>
+          <td>Maximal return temp.</td>
+          <td>26</td>
+          <td>°C</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+      <!-- <br>
+    <a target="_blank" href="https://colab.research.google.com/github/pnnl/NeuralDAEs/blob/master/training/tank_dae_example.ipynb">
+      <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab" style="height: 30px;"/>
+    </a>
+    <span>Try this example interactively in <strong>Google Colab</strong></span>
+    <br><br> -->
+
+    The closed-loop response of the MI-DPC controller, implemented in a receding-horizon manner, is shown in the Figure below. 
+    The results illustrate that the controller tracks the time-varying cooling demand over the seven-day simulation while coordinating the chiller power consumption, return and supply temperatures,
+     binary staging decisions, and mass flow rates. Around \(75\) hours, the relaxed integer variable \(\tilde{\delta}\) increases toward the rounding threshold, 
+     indicating that the controller temporarily favors activating the second controllable chiller. This behavior is consistent with the PLR-COP characteristic: 
+     operating an additional unit may improve chiller efficiency by shifting the active chillers toward a more favorable part-load ratio. However, \(\tilde{\delta}\) 
+     remains below the rounding threshold, so the additional chiller is not activated. This suggests that, within the predictive objective, 
+     the potential efficiency improvement is outweighed by the associated increase in load-tracking error and switching cost.
+     <br>
+<br>
+      <div class="has-text-centered">
+        <img src="figures/control_plot_N15_pages.png" alt="Closed-loop response of the MI-DPC controller" style="width: 100%;"/>
+        <p><em><strong>Figure:</strong> Closed-loop seven-day simulation results of a two-chiller system obtained with MI-DPC for a prediction horizon of \(N\!=\!15\). The process constraints are depicted by black dotted lines.</em></p>
+ 
+      </div>
+      <br>
+
+      The proposed MI-DPC framework achieved up to \(13\)% energy savings when compared to the 
+      <span class="tooltip-rbc" style="position:relative; cursor:pointer; border-bottom:1px dashed blue;">
+        <strong style="color: blue;">rule-based controller (RBC)</strong>
+        <span class="tooltip-text-rbc" style="
+            visibility:hidden;
+            width: 540px; /* Increased width for better readability */
+            background-color: #222;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 0.8em 1em;
+            position: absolute;
+            z-index: 100;
+            bottom: 120%;
+            left: 50%;
+            margin-left: -270px; /* Adjust for new width to keep centered */
+            opacity: 0;
+            transition: opacity 0.2s;">
+            <strong>Rule-Based Controller (RBC):</strong>
+            <br>
+            Due to the complexity of the OCP, rule-based control (RBC) is the most common control strategy used for improving the energy efficiency of chiller plants in industry.
+             Assuming the PLR-COP characteristic is known, a typical approach for multi-chiller systems is to stage the chillers based on the system's PLR, defined as
+            \begin{equation}
+                \text{PLR}_{k}\!=\! \frac{\sum_{i=1}^MQ^{(i)}_{k}}{{[Q_\text{max}^{(1)},\dots,Q_\text{max}^{(M)}][\delta^{(1)}_{k},\dots,\delta^{(M)}_{k}]^\top}
+                }.
+            \end{equation}
+            In cases where the chiller plant consists of units with similar PLR-COP characteristics, a simple sequential threshold-based staging strategy can be employed:
+            \begin{equation}
+                s_{k+1}\!=\!
+            \begin{cases}
+            \min\{M,s_{k}+1\}, & \text{if } \text{PLR}_k\!>\!\overline{t},\\[0pt]
+            \max\{1,s_{k}-1\}, & \text{if } \text{PLR}_k\!<\!\underline{t},\\[0pt]
+            s_{k}, & \text{otherwise,}
+            \end{cases}
+            \end{equation}
+            where
+            \begin{equation}
+                s_{k}\!:=\!\sum_{i=1}^M\delta^{(i)}_{k}\!\in\!\mathbb{Z}_{>0}
+            \end{equation}
+            denotes the number of active chillers at time \(k\), and
+            \(\underline{t},\,\overline{t}\!\in\!(0,1)\) are the staging thresholds; selected to avoid high-frequency switching while maintaining the effective operating range of the system, 
+            with \(\underline{t}<\overline{t}\). In addition, the continuous control variables are typically fixed at constant values that prevent process constraint violations. 
+     
+        </span>
+      </span>.
+      <script>
+        // Simple JS to handle hover tooltip for RBC
+        document.addEventListener("DOMContentLoaded", function() {
+          var tooltip = document.querySelector('.tooltip-rbc');
+          var tiptext = tooltip.querySelector('.tooltip-text-rbc');
+          tooltip.addEventListener('mouseenter', function() {
+            tiptext.style.visibility = 'visible';
+            tiptext.style.opacity = '1';
+          });
+          tooltip.addEventListener('mouseleave', function() {
+            tiptext.style.visibility = 'hidden';
+            tiptext.style.opacity = '0';
+          });
+        });
+      </script>
+       These savings resulted primarily from more adaptive and frequent chiller staging, albeit at the expense of a larger relative load-tracking error,
+        as well as from reduced water pump power consumption. MI-DPC simultaneously schedules chiller activation and adaptively adjusts the continuous control variables. 
+        
+        <br>
+
+        <br>
+        In addition to energy savings, the MI-DPC framework outperformed the RBC in terms of constraint satisfaction. Specifically, when considering cooling ramp-rate constraints,
+         i.e., \(\dot{Q}_{\min}\leq\!\dot{Q}\!\leq\dot{Q}_{\max}\), which have been observed in real chiller plant operations and reported by <a href="https://www.sciencedirect.com/science/article/pii/S0306261921007662">Shan et al. (2021)</a>;
+          the RBC may fail to activate chillers in time when encountering a steep increase in cooling demand. As illustrated in Figure below, the RBC stages chillers solely based on the staging threshold. 
+          However, due to the cooling ramp limitation, the return temperature can exceed the process safety bounds.
+           In contrast, the MI-DPC framework anticipates future load changes and stages chillers proactively based on the known future cooling demand.
+            In the experiment, during the \(3\!-\!7\) hours interval, the results demonstrate that MI-DPC effectively adapts to abrupt changes in the cooling load profile,
+             even when such scenarios were not represented in the training dataset.
+
+
+
+      <div class="has-text-centered">
+        <img src="figures/violation_plot.png" alt="Simulation results" style="max-width: 50%; height: auto;"/>
+        <p><em><strong>Figure:</strong> Closed-loop simulation results of a chiller plant \( (M\!=\!3) \)
+           with MI-DPC \( (N\!=\!15) \)  and RBC policies, highlighting the importance of predictive action for stable
+            operation when cooling ramp-rate constraints are considered.</em></p>
+      </div>
+
+      <br>
+      <br>
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h5 class="title is-5">Computational Scalability</h5>
+          <div class="content has-text-justified">
+            The principal advantage of MI-DPC lies in its computational efficiency during both controller synthesis and inference. 
+            Notably, the equivalent MI-MPC formulation was shown to be computationally intractable even for the smallest problem instance with \( M = 2 \) and \( N = 5 \), 
+            where, using the Gurobi solver, the mean inference time was around 150 seconds. In contrast, MI-DPC achieves inference times several orders of magnitude faster, 
+            enabling mixed-integer nonlinear optimal control problems to be solved on computationally constrained edge devices in real time—a capability not attainable with conventional approaches.
+            The computational scalability of MI-DPC is illustrated in the Figure below.
+       
+
+          <div class="has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem;">
+            <img src="figures/MIT_plot.jpg" alt="MI-DPC Computational Scalability Results" style="max-width: 50%; height: auto;"/>
+            <p><em><strong>Figure:</strong> Computational scalability of MI-DPC across different numbers of chillers \( (M) \) and horizon lengths \( (N) \).
+               The top panel illustrates the total training time (<span class="tooltip-tt" style="border-bottom:1px dotted blue;cursor:help;position:relative; color: blue;">
+                TT
+                <span class="tooltip-text-tt" style="visibility:hidden;opacity:0;transition:opacity 0.2s;position:absolute;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:0.5em 1em;border-radius:4px;z-index:10;margin-top:1.8em;font-size:0.95em;white-space:nowrap;">Measured using single Nvidia RTX 5090.</span>
+               </span>), while the bottom panel reports the mean inference time (<span class="tooltip-mit" style="border-bottom:1px dotted blue;cursor:help;position:relative; color: blue;">
+                MIT
+                <span class="tooltip-text-mit" style="visibility:hidden;opacity:0;transition:opacity 0.2s;position:absolute;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:0.5em 1em;border-radius:4px;z-index:10;margin-top:1.8em;font-size:0.95em;white-space:nowrap;">Measured using a single thread of Intel Core i9-14900KF.</span>
+               </span>).</em></p>
+               <script>
+               // Simple JS to handle TT and MIT tooltips
+               document.addEventListener("DOMContentLoaded", function() {
+                 var ttTooltip = document.querySelector('.tooltip-tt');
+                 var ttText = ttTooltip.querySelector('.tooltip-text-tt');
+                 ttTooltip.addEventListener('mouseenter', function() {
+                   ttText.style.visibility = 'visible';
+                   ttText.style.opacity = '1';
+                 });
+                 ttTooltip.addEventListener('mouseleave', function() {
+                   ttText.style.visibility = 'hidden';
+                   ttText.style.opacity = '0';
+                 });
+                 var mitTooltip = document.querySelector('.tooltip-mit');
+                 var mitText = mitTooltip.querySelector('.tooltip-text-mit');
+                 mitTooltip.addEventListener('mouseenter', function() {
+                   mitText.style.visibility = 'visible';
+                   mitText.style.opacity = '1';
+                 });
+                 mitTooltip.addEventListener('mouseleave', function() {
+                   mitText.style.visibility = 'hidden';
+                   mitText.style.opacity = '0';
+                 });
+               });
+               </script>
+      
+          </div>
+          
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Conclusion -->
+<div class="columns">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Conclusions and Future Work</h2>
+    <div class="content has-text-justified">
+
+This work proposes a mixed-integer nonlinear Differentiable Predictive Control (MI-DPC) framework for real-time optimization of multi-chiller plants,
+ unifying discrete staging and continuous setpoint control within a single differentiable program. 
+ In simulations on multi-chiller systems, MI-DPC achieved up to \(13\%\)  energy savings relative to an industrial RBC baseline while maintaining process constraints,
+  and delivered orders-of-magnitude faster inference than the equivalent MI-MPC formulation, indicating strong potential for practical and scalable deployment on large-scale HVAC operations.
+
+
+<br><br>      
+Building on the findings of this study, several extensions are envisioned.
+The chiller plant model is to be extended to include cooling towers, allowing for further energy savings potential through optimization of condenser-water loop setpoints 
+(<a href="https://www.sciencedirect.com/science/article/pii/S0360132316304036">Huang et al., 2017</a>;
+ <a href="https://www.sciencedirect.com/science/article/pii/S037877881930636X">Wang et al., 2019</a>). 
+The integration of water-side economizers can also be explored, as these have been shown to reduce energy through free-cooling (<a href="https://www.tandfonline.com/doi/full/10.1080/23744731.2024.2404814">Faulkner et al., 2025</a>) and introduce additional discrete control variables for economizer activation.
+Future work will also incorporate probabilistic cooling-load forecasting to more accurately capture real-world uncertainty.
+
+      <br><br>
+      It is further recognized that the problem is solved approximately, without a guaranteed global optimum.
+       Moreover, while integrality and satisfaction of input constraints are enforced through projection-based methods, 
+       strict feasibility for state constraints is not guaranteed. These aspects will be addressed in future work.
+    </div>
+  </div>
+</div>
+<!--/ Conclusion -->
+
+
+
+<!-- Acknowledgment -->
+<div class="columns">
+  <div class="column is-full-width">
+    <h2 class="title is-3">Acknowledgment</h2>
+    <div class="content has-text-justified">
+      This research was supported by the U.S. Department of Energy Building Technologies Office (BTO), 
+      USA within the Office of Energy Efficiency and Renewable Energy (EERE), USA under Contract No. DE-AC05-76RL01830.
+
+      <div class="has-text-centered">
+        <img src="figures/PNNL_logo.jpg" alt="PNNL Logo" style="max-width: 500px; height: auto;"/>
+      </div>
+
+      <br>
+
+      This work was also supported by the Ralph O’Connor Sustainable Energy Institute (ROSEI) at Johns Hopkins University.
+
+      <div class="has-text-centered">
+        <img src="figures/JHU_logo.png" alt="JHU Logo" style="max-width: 500px; height: auto;"/>
+      </div>
+    </div>
+  </div>
+</div>
+<!--/ Acknowledgment -->
+
+    </div>
+</section>
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{boldocky2026data,
+      title={Data center chiller plant optimization via mixed-integer nonlinear differentiable predictive control},
+      author={Boldock{\'y}, J{\'a}n and Faulkner, Cary and Michael, Elad and Gulan, Martin and Tuor, Aaron and Drgo{\v{n}}a, J{\'a}n},
+      journal={Control Engineering Practice},
+      volume={174},
+      pages={107063},
+      year={2026},
+      publisher={Elsevier},
+     doi = {https://doi.org/10.1016/j.conengprac.2026.107063},
+    }</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/pnnl/MI-DPC" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+        <span>Code</span>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+           Website based on <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies template</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
